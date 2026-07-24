@@ -161,6 +161,18 @@ export function CharacterCard({
       <div className={classes.rowContainer}>
         <PoolDisplay
           staticRating
+          pool={pools.witheringAttack}
+          label="Withering"
+          classes={{ root: classes.poolBlock }}
+        />
+        <PoolDisplay
+          staticRating
+          pool={pools.decisiveAttack}
+          label="Decisive"
+          classes={{ root: classes.poolBlock }}
+        />
+        <PoolDisplay
+          staticRating
           pool={pools.evasion}
           label="Evasion"
           classes={{ root: classes.poolBlock }}

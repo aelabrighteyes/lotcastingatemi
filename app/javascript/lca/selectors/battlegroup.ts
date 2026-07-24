@@ -47,6 +47,19 @@ export const canIDeleteBattlegroup = doIOwnBattlegroup
 export const getPoolsAndRatingsForBattlegroup = (
   state: RootState,
   id: number,
-) => ({
-  joinBattle: bgJoinBattlePool(getSpecificBattlegroup(state, id)),
-})
+) => {
+  const bg = getSpecificBattlegroup(state, id)
+  const attacks = getAttacksForBattlegroup(state, id)
+  
+  const bestAttack =
+    attacks.length > 0
+      ? attacks.reduce((best, current) =>
+          current.pool > best.pool ? current : best,
+        )
+      : { pool: 0 }
+
+  return {
+    joinBattle: bgJoinBattlePool(bg),
+    attack: { total: bestAttack.pool, noSummary: true },
+  }
+}

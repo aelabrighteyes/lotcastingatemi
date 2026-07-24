@@ -102,6 +102,11 @@ function QcCard(props: Props) {
 
       <div className={classes.flexContainerWrap}>
         <PoolDisplay
+          pool={pools.attack}
+          label="Attack"
+          classes={{ root: classes.poolBlock }}
+        />
+        <PoolDisplay
           pool={pools.evasion}
           label="Evasion"
           classes={{ root: classes.poolBlock }}

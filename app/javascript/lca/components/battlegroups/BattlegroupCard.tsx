@@ -9,9 +9,11 @@ import {
 import Typography from '@material-ui/core/Typography'
 import DragHandleIcon from '@material-ui/icons/DragHandle'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
+import { compose } from 'recompose'
+import { connect } from 'react-redux'
 
 import useAppSelector from '@lca/hooks/UseAppSelector.ts'
-import { doIOwnBattlegroup } from '@lca/selectors/index.ts'
+import { doIOwnBattlegroup, getPoolsAndRatingsForBattlegroup } from '@lca/selectors/index.ts'
 import sharedStyles from '@lca/styles/index.ts'
 import type { Battlegroup } from '@lca/types/battlegroup.ts'
 import {
@@ -66,10 +68,12 @@ interface ExposedProps {
   st?: boolean
 }
 
-interface Props extends ExposedProps, WithStyles<typeof styles> {}
+interface Props extends ExposedProps, WithStyles<typeof styles> {
+  pools: Object
+}
 
 function BattlegroupCard(props: Props) {
-  const { battlegroup, chronicle, st, classes } = props
+  const { battlegroup, chronicle, st, pools, classes } = props
   const isOwner = useAppSelector((state) =>
     doIOwnBattlegroup(state, battlegroup.id),
   )
@@ -145,6 +149,12 @@ function BattlegroupCard(props: Props) {
       </div>
 
       <div className={classes.flexContainerWrap}>
+        <PoolDisplay
+          battlegroup
+          pool={pools.attack}
+          label="Attack"
+          classes={{ root: classes.poolBlock }}
+        />
         <PoolDisplay
           battlegroup
           pool={{ total: battlegroup.join_battle }}
@@ -231,4 +241,10 @@ function BattlegroupCard(props: Props) {
   )
 }
 
-export default withStyles(styles)(BattlegroupCard)
+const mapStateToProps = (state, props: ExposedProps) => ({
+  pools: getPoolsAndRatingsForBattlegroup(state, props.battlegroup.id),
+})
+
+const enhance = compose(connect(mapStateToProps), withStyles(styles))
+
+export default enhance(BattlegroupCard)

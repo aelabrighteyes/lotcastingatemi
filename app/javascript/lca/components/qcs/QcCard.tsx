@@ -121,6 +121,11 @@ function QcCard(props: Props) {
 
       <div className={classes.rowContainer}>
         <PoolDisplay
+          pool={pools.attack}
+          label="Attack"
+          classes={{ root: classes.poolBlock }}
+        />
+        <PoolDisplay
           pool={pools.joinBattle}
           label="Join Battle"
           classes={{ root: classes.poolBlock }}
