@@ -147,6 +147,13 @@ export function CharacterCard({
             classes={{ root: classes.poolBlock }}
           />
         )}
+        {pools.bestAttack && (
+          <PoolDisplay
+            pool={pools.bestAttack}
+            label="Best Attack"
+            classes={{ root: classes.poolBlock }}
+          />
+        )}
       </div>
 
       {(penalties.mobility !== 0 ||
