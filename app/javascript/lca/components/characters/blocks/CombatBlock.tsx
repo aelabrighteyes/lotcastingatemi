@@ -26,6 +26,16 @@ export function CombatBlock({ pools, classes }: Props) {
       <Typography variant="h6">Combat Pools</Typography>
       <div className={classes.container}>
         <PoolDisplay
+          pool={pools.witheringAttack}
+          label="Withering"
+          classes={{ root: classes.poolBlock }}
+        />
+        <PoolDisplay
+          pool={pools.decisiveAttack}
+          label="Decisive"
+          classes={{ root: classes.poolBlock }}
+        />
+        <PoolDisplay
           pool={pools.joinBattle}
           label="Join Battle"
           classes={{ root: classes.poolBlock }}

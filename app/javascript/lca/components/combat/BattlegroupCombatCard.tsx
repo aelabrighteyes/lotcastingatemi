@@ -1,9 +1,12 @@
+import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Paper from '@material-ui/core/Paper'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
+import { compose } from 'recompose'
 
+import { getPoolsAndRatingsForBattlegroup } from '@lca/selectors/index.ts'
 import sharedStyles from '@lca/styles/index.ts'
 import type { Battlegroup } from '@lca/types/index.ts'
 import {
@@ -58,10 +61,11 @@ const styles = (theme) => ({
 
 type Props = {
   battlegroup: Battlegroup
+  pools: Object
   classes: Object
 }
 
-function BattlegroupCard({ battlegroup, classes }: Props) {
+function BattlegroupCard({ battlegroup, pools, classes }: Props) {
   return (
     <Paper className={classes.root}>
       <div className={classes.flexContainer}>
@@ -124,6 +128,12 @@ function BattlegroupCard({ battlegroup, classes }: Props) {
       <div className={classes.flexContainerWrap}>
         <PoolDisplay
           battlegroup
+          pool={pools.attack}
+          label="Attack"
+          classes={{ root: classes.poolBlock }}
+        />
+        <PoolDisplay
+          battlegroup
           pool={{
             total: Math.max(
               battlegroup.evasion +
@@ -180,4 +190,14 @@ function BattlegroupCard({ battlegroup, classes }: Props) {
   )
 }
 
-export default withStyles(styles)(BattlegroupCard)
+type ExposedProps = {
+  battlegroup: Battlegroup
+}
+
+const mapStateToProps = (state, props: ExposedProps) => ({
+  pools: getPoolsAndRatingsForBattlegroup(state, props.battlegroup.id),
+})
+
+const enhance = compose(connect(mapStateToProps), withStyles(styles))
+
+export default enhance(BattlegroupCard)

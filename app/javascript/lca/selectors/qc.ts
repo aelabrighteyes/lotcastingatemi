@@ -45,14 +45,21 @@ export const getPenaltiesForQc = createCachedSelector(
 )(qcIdMemoizer)
 
 export const getPoolsAndRatingsForQc = createCachedSelector(
-  [getSpecificQc, getMeritsForQc, getPenaltiesForQc],
-  (qc, merits, penalties) => {
+  [getSpecificQc, getMeritsForQc, getPenaltiesForQc, getAttacksForQc],
+  (qc, merits, penalties, attacks) => {
     const meritNames = [...new Set(merits.map((m) => m.name.toLowerCase()))]
     const tiny = meritNames.some((m) =>
       m.toLowerCase().includes('tiny creature'),
     )
       ? [{ label: 'tiny creature', bonus: 2, situational: true }]
       : undefined
+
+    const bestAttack =
+      attacks.length > 0
+        ? attacks.reduce((best, current) =>
+            current.pool > best.pool ? current : best,
+          )
+        : { pool: 0 }
 
     return {
       guile: qcRating(qc, qc.guile, penalties.wound),
@@ -75,6 +82,7 @@ export const getPoolsAndRatingsForQc = createCachedSelector(
       featsOfStrength: qcPool(qc, qc.feats_of_strength, penalties.wound, [
         { label: `str ${qc.strength} feats`, bonus: 0 },
       ]),
+      attack: { total: bestAttack.pool, noSummary: true },
     }
   },
 )(qcIdMemoizer)

@@ -99,6 +99,56 @@ export const getPoolsForAllWeaponsForCharacter = createCachedSelector(
     character.weapons.map((id) => getPoolsForWeapon(state, id)),
 )(characterIdMemoizer)
 
+const sortByAttack = (weaponA, weaponB) => {
+  const attackA = weaponA.witheringAttack
+  const attackB = weaponB.witheringAttack
+  const specialtiesA =
+    attackA.specialties === undefined ? [] : attackA.specialties
+  const specialtiesB =
+    attackB.specialties === undefined ? [] : attackB.specialties
+
+  if (attackA.total > attackB.total) {
+    return -1
+  } else if (attackA.total < attackB.total) {
+    return 1
+  } else if (attackA.excellency > attackB.excellency) {
+    return -1
+  } else if (attackA.excellency < attackB.excellency) {
+    return 1
+  } else if (specialtiesA.length > specialtiesB.length) {
+    return -1
+  } else if (specialtiesA.length < specialtiesB.length) {
+    return 1
+  } else {
+    return 0
+  }
+}
+
+const sortByDecisiveAttack = (weaponA, weaponB) => {
+  const attackA = weaponA.decisiveAttack
+  const attackB = weaponB.decisiveAttack
+  const specialtiesA =
+    attackA.specialties === undefined ? [] : attackA.specialties
+  const specialtiesB =
+    attackB.specialties === undefined ? [] : attackB.specialties
+
+  if (attackA.total > attackB.total) {
+    return -1
+  } else if (attackA.total < attackB.total) {
+    return 1
+  } else if (attackA.excellency > attackB.excellency) {
+    return -1
+  } else if (attackA.excellency < attackB.excellency) {
+    return 1
+  } else if (specialtiesA.length > specialtiesB.length) {
+    return -1
+  } else if (specialtiesA.length < specialtiesB.length) {
+    return 1
+  } else {
+    return 0
+  }
+}
+
 export const getPoolsAndRatings = createCachedSelector(
   [
     getSpecificCharacter,
@@ -128,6 +178,14 @@ export const getPoolsAndRatings = createCachedSelector(
       parry: { total: 'None', noSummary: true },
     }
 
+    const bestWitheringAttackWeapon = weaponPools.sort(sortByAttack)[0] || {
+      witheringAttack: { total: 'None', noSummary: true },
+    }
+
+    const bestDecisiveAttackWeapon = weaponPools.sort(sortByDecisiveAttack)[0] || {
+      decisiveAttack: { total: 'None', noSummary: true },
+    }
+
     return {
       exaltTypeBase: exaltTypeBase(character),
       excellencyAbils: excellencyAbils,
@@ -152,6 +210,8 @@ export const getPoolsAndRatings = createCachedSelector(
         penalties,
         excellencyAbils,
       ),
+      witheringAttack: bestWitheringAttackWeapon.witheringAttack,
+      decisiveAttack: bestDecisiveAttackWeapon.decisiveAttack,
       bestParry: bestParryWeapon.parry,
       soak: ratings.soak(character, meritNames, spellNames),
       hardness: ratings.hardness(character),
